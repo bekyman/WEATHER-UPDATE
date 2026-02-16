@@ -27,12 +27,12 @@ export default function useWeather(city) {
     }
   }
 
-  // Fetch on city change
+  
   useEffect(() => {
     fetchWeather();
   }, [city]);
 
-  // Auto refresh every 5 minutes
+  
   useEffect(() => {
     const interval = setInterval(fetchWeather, 300000);
     return () => clearInterval(interval);
