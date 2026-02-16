@@ -1,17 +1,28 @@
-import { useEffect } from "react";
-import { getWeather } from "./services/weatherServices";
+import { useState } from "react";
+import useWeather from "./hooks/useWeather";
+import SearchBar from "./components/SearchBar";
+import WeatherCard from "./components/WeatherCard";
+import ForecastList from "./components/ForecastList";
+import ErrorMessage from "./components/ErrorMessage";
+import RefreshButton from "./components/RefreshButton";
 
 export default function App() {
-
-  useEffect(() => {
-    getWeather("Addis Ababa")
-      .then(data => console.log(data))
-      .catch(err => console.error(err.message));
-  }, []);
+  const [city, setCity] = useState("Addis Ababa");
+  const { weather, forecast, error, loading, refresh } = useWeather(city);
 
   return (
-    <div className="h-screen flex items-center justify-center text-xl">
-      Check console for weather data
+    <div className="min-h-screen bg-green-200 flex flex-col items-center p-6">
+      <h1 className="text-3xl font-bold mb-6">Weather Dashboard</h1>
+
+      <SearchBar onSearch={setCity} />
+
+      {loading && <p className="mt-4">Loading...</p>}
+      <ErrorMessage message={error} />
+
+      <WeatherCard weather={weather} />
+      <ForecastList forecast={forecast} />
+
+      <RefreshButton onClick={refresh} />
     </div>
   );
 }
