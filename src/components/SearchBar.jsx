@@ -1,31 +1,26 @@
 import { useState } from "react";
 
 export default function SearchBar({ onSearch }) {
-  const [city, setCity] = useState("");
+  const [input, setInput] = useState("");
 
-  function submit(e) {
+  function handleSubmit(e) {
     e.preventDefault();
-    if (!city.trim()) return;
-    onSearch(city);
-    setCity("");
+    if (!input.trim()) return;
+    onSearch(input);
+    setInput("");
   }
 
   return (
-    <form
-      onSubmit={submit}
-      className="bg-white/80 rounded-2xl shadow-md p-6 mt-6"
-    >
-      <h2 className="text-2xl font-semibold mb-4">Search City</h2>
-
-      <div className="flex items-center bg-gray-100 rounded-lg px-4 py-3">
-        <input
-          value={city}
-          onChange={(e) => setCity(e.target.value)}
-          placeholder="Search for a city..."
-          className="bg-transparent outline-none flex-1"
-        />
-        <button className="text-xl">🔍</button>
-      </div>
+    <form onSubmit={handleSubmit} className="flex gap-2 w-full max-w-md">
+      <input
+        className="flex-1 p-3 rounded-xl border shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-400"
+        placeholder="Search for a city..."
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button className="bg-blue-500 text-white px-4 rounded-xl hover:bg-blue-600 transition">
+        Search
+      </button>
     </form>
   );
 }
