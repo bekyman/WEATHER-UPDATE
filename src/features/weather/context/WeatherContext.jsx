@@ -1,4 +1,4 @@
-import { saveSearch, getRecentSearches } from '../../../utils/searchStorage';
+import { saveSearch, getRecentSearches } from "../utils/searchStorage";
 
 
 const [history, setHistory] = useState(getRecentSearches());
