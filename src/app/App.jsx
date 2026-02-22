@@ -5,8 +5,9 @@ import ForecastList from '../features/weather/components/ForecastList';
 import UnitToggle from '../features/weather/components/UnitToggle'; 
 
 
-import { useGeolocation } from '../hooks/useGeolocation'; 
+import { useGeolocation } from '../features/weather/hooks/useGeolocation';
 import { useWeather } from '../features/weather/hooks/useWeather';
+
 
 function App() {
   
