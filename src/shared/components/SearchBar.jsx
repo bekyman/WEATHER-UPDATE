@@ -9,7 +9,7 @@ const SearchBar = () => {
     e.preventDefault();
     if (query.trim()) {
       fetchWeather(query);
-      setQuery(''); // Clear the input after searching
+      setQuery(''); 
     }
   };
 
