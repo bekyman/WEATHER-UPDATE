@@ -1,24 +1,39 @@
-import { saveSearch, getRecentSearches } from "../utils/searchStorage";
+import React, { createContext, useContext, useState } from 'react';
 
+const WeatherContext = createContext();
 
-const [history, setHistory] = useState(getRecentSearches());
+export const WeatherProvider = ({ children }) => {
+  const [weatherData, setWeatherData] = useState(null);
+  const [forecastData, setForecastData] = useState(null);
+  const [unit, setUnit] = useState('metric');
+  const [recentSearches, setRecentSearches] = useState([]);
 
-const fetchWeather = useCallback(async (city) => {
-  setLoading(true);
-  setError(null);
-  try {
-    const data = await getWeatherData(city, unit);
-    setWeather(data.current);
-    setForecast(data.forecast);
-    setCurrentCity(city);
-    
-    
-    const updatedHistory = saveSearch(city);
-    setHistory(updatedHistory); 
-    
-  } catch (err) {
-    setError(err.message);
-  } finally {
-    setLoading(false);
-  }
-}, [unit]);
+  const updateWeather = (data) => setWeatherData(data);
+  const updateForecast = (data) => setForecastData(data);
+
+  const addRecentSearch = (city) => {
+    setRecentSearches((prev) => {
+      const filtered = prev.filter((c) => c !== city);
+      return [city, ...filtered].slice(0, 5);
+    });
+  };
+
+  return (
+    <WeatherContext.Provider
+      value={{
+        weatherData,
+        forecastData,
+        unit,
+        recentSearches,
+        updateWeather,
+        updateForecast,
+        setUnit,
+        addRecentSearch
+      }}
+    >
+      {children}
+    </WeatherContext.Provider>
+  );
+};
+
+export const useWeather = () => useContext(WeatherContext);
