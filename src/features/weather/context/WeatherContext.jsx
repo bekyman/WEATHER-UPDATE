@@ -1,4 +1,7 @@
-const [currentCity, setCurrentCity] = useState(""); 
+import { saveSearch, getRecentSearches } from '../../../utils/searchStorage';
+
+
+const [history, setHistory] = useState(getRecentSearches());
 
 const fetchWeather = useCallback(async (city) => {
   setLoading(true);
@@ -7,17 +10,15 @@ const fetchWeather = useCallback(async (city) => {
     const data = await getWeatherData(city, unit);
     setWeather(data.current);
     setForecast(data.forecast);
-    setCurrentCity(city); 
+    setCurrentCity(city);
+    
+    
+    const updatedHistory = saveSearch(city);
+    setHistory(updatedHistory); 
+    
   } catch (err) {
     setError(err.message);
   } finally {
     setLoading(false);
   }
 }, [unit]);
-
-
-useEffect(() => {
-  if (currentCity) {
-    fetchWeather(currentCity);
-  }
-}, [unit]); 
