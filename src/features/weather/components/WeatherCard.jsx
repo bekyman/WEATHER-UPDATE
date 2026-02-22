@@ -1,32 +1,53 @@
-export default function WeatherCard({ weather }) {
-  if (!weather) return null;
+import React from 'react';
+import { useWeather } from '../context/WeatherContext';
 
-  const icon = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`;
+const WeatherCard = () => {
+  const { weather, unit, loading } = useWeather();
+
+ 
+  if (loading) return <div className="loader">Gathering the clouds...</div>;
+  if (!weather) return <div className="welcome-msg">Search for a city to see the weather!</div>;
+
+
+  const iconUrl = `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`;
+  
+  
+  const unitLabel = unit === 'metric' ? '°C' : '°F';
 
   return (
-    <div className="bg-white rounded-2xl shadow-lg p-6 w-full max-w-md text-center">
-      <h2 className="text-2xl font-bold">{weather.name}</h2>
+    <div className="weather-card">
+      <div className="card-header">
+        <h2>{weather.name}, {weather.sys.country}</h2>
+        <p>{new Date().toLocaleDateString()}</p>
+      </div>
 
-      <img src={icon} className="mx-auto" />
-
-      <p className="text-4xl font-semibold">
-        {Math.round(weather.main.temp)}°C
-      </p>
-
-      <div className="mt-4 grid grid-cols-3 gap-4 text-sm">
-        <div>
-          <p className="font-semibold">Humidity</p>
-          <p>{weather.main.humidity}%</p>
+      <div className="card-body">
+        <div className="temp-section">
+          <img src={iconUrl} alt={weather.weather[0].description} />
+          <span className="temperature">
+            {Math.round(weather.main.temp)}{unitLabel}
+          </span>
         </div>
-        <div>
-          <p className="font-semibold">Wind</p>
-          <p>{weather.wind.speed} km/h</p>
+        
+        <p className="description">{weather.weather[0].description}</p>
+      </div>
+
+      <div className="card-footer">
+        <div className="info-item">
+          <span>Humidity</span>
+          <strong>{weather.main.humidity}%</strong>
         </div>
-        <div>
-          <p className="font-semibold">Condition</p>
-          <p>{weather.weather[0].main}</p>
+        <div className="info-item">
+          <span>Wind</span>
+          <strong>{weather.wind.speed} {unit === 'metric' ? 'm/s' : 'mph'}</strong>
+        </div>
+        <div className="info-item">
+          <span>Feels Like</span>
+          <strong>{Math.round(weather.main.feels_like)}{unitLabel}</strong>
         </div>
       </div>
     </div>
   );
-}
+};
+
+export default WeatherCard;
