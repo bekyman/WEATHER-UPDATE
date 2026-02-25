@@ -1,5 +1,5 @@
 HEAD
-# weather-dashboard-
+# WEATHER-UPDATE 
  It is a responsive weather application built with React and OpenWeatherMap API.
 ## Features
 - Search weather by city
@@ -17,7 +17,7 @@ HEAD
 - OpenWeatherMap API
 
 ## Installation
-- git clone https://github.com/bekyman/weather-dashboard.git
+- git clone https://github.com/bekyman/WEATHER-UPDATE.git
 - cd weather-dashboard
 - npm install
 - npm run dev 
