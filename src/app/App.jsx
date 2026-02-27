@@ -1,3 +1,4 @@
+console.log("API KEY:", import.meta.env.VITE_WEATHER_API_KEY);
 import React, { useEffect } from 'react'; 
 import SearchBar from '../components/SearchBar';
 import WeatherCard from '../features/weather/components/WeatherCard';
