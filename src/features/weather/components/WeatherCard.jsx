@@ -1,40 +1,59 @@
-const iconUrl = weather?.weather?.[0]?.icon
-  ? `https://openweathermap.org/img/wn/${weather.weather[0].icon}@2x.png`
-  : "";
+import React, { createContext, useContext, useState } from "react";
 
-const unitLabel = unit === 'metric' ? '°C' : '°F';
 
-return (
-  <div className="weather-card">
-    <div className="card-header">
-      <h2>{weather?.name}, {weather?.sys?.country}</h2>
-      <p>{new Date().toLocaleDateString()}</p>
-    </div>
+const WeatherContext = createContext(null);
 
-    <div className="card-body">
-      <div className="temp-section">
-        {iconUrl && <img src={iconUrl} alt={weather?.weather?.[0]?.description || "Weather icon"} />}
-        <span className="temperature">
-          {weather?.main?.temp ? Math.round(weather.main.temp) : "--"}{unitLabel}
-        </span>
-      </div>
-      
-      <p className="description">{weather?.weather?.[0]?.description || "No description yet"}</p>
-    </div>
 
-    <div className="card-footer">
-      <div className="info-item">
-        <span>Humidity</span>
-        <strong>{weather?.main?.humidity ?? "--"}%</strong>
-      </div>
-      <div className="info-item">
-        <span>Wind</span>
-        <strong>{weather?.wind?.speed ?? "--"} {unit === 'metric' ? 'm/s' : 'mph'}</strong>
-      </div>
-      <div className="info-item">
-        <span>Feels Like</span>
-        <strong>{weather?.main?.feels_like ? Math.round(weather.main.feels_like) : "--"}{unitLabel}</strong>
-      </div>
-    </div>
-  </div>
-);
+export const WeatherProvider = ({ children }) => {
+  const [weather, setWeather] = useState(null);  
+  const [loading, setLoading] = useState(false); 
+  const [unit, setUnit] = useState("metric");     
+
+  
+  const fetchWeather = async (city) => {
+    if (!city) return;
+    setLoading(true);
+    try {
+      const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+      const res = await fetch(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unit}&appid=${apiKey}`
+      );
+      if (!res.ok) throw new Error("City not found");
+      const data = await res.json();
+      setWeather(data);
+    } catch (err) {
+      console.error("Weather fetch error:", err);
+      setWeather(null); 
+    } finally {
+      setLoading(false);
+    }
+  };
+
+ 
+  const toggleUnit = () => {
+    setUnit((prev) => (prev === "metric" ? "imperial" : "metric"));
+  };
+
+  return (
+    <WeatherContext.Provider
+      value={{
+        weather,
+        loading,
+        unit,
+        fetchWeather,
+        toggleUnit,
+      }}
+    >
+      {children}
+    </WeatherContext.Provider>
+  );
+};
+
+I 
+export const useWeather = () => {
+  const context = useContext(WeatherContext);
+  if (!context) {
+    throw new Error("useWeather must be used inside WeatherProvider");
+  }
+  return context;
+};
