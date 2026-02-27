@@ -2,7 +2,17 @@ import React from 'react';
 import { useWeather } from '../context/WeatherContext';
 
 const WeatherCard = () => {
-  const { weather, unit, loading } = useWeather();
+  const context = useWeather();
+
+if (!context) {
+  return <div>Context not found</div>;
+}
+
+const { weather, unit, loading } = context;
+
+if (!weather) {
+  return <div>No weather data yet</div>;
+}
 
  
   if (loading) return <div className="loader">Gathering the clouds...</div>;
