@@ -10,7 +10,6 @@ HEAD
 - Recent searches (localStorage)
 - Auto refresh weather updates
 - Error handling for invalid cities
-- Responsive UI
 ## Tech Stack
 - React (Vite)
 - Tailwind CSS
