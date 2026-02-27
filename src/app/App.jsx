@@ -1,44 +1,44 @@
-console.log("API KEY:", import.meta.env.VITE_WEATHER_API_KEY);
-import React, { useEffect } from 'react'; 
-import SearchBar from '../components/SearchBar';
-import WeatherCard from '../features/weather/components/WeatherCard';
-import ForecastList from '../features/weather/components/ForecastList';
-import UnitToggle from '../features/weather/components/UnitToggle'; 
+import React, { useState } from "react";
+import { WeatherProvider, useWeather } from "./features/weather/context/WeatherContext";
+import WeatherCard from "./features/weather/components/WeatherCard";
 
+const SearchForm = () => {
+  const [city, setCity] = useState("");
+  const { fetchWeather } = useWeather();
 
-import { useGeolocation } from '../features/weather/hooks/useGeolocation'; 
-import { useWeather } from '../features/weather/hooks/useWeather';
-
-
-function App() {
-  
-  const { getPosition, coords } = useGeolocation();
-  const { fetchWeatherByCoords } = useWeather(); 
-
-  useEffect(() => {
-    getPosition(); 
-  }, [getPosition]); 
-
-  useEffect(() => {
-    if (coords) {
-      fetchWeatherByCoords(coords.lat, coords.lon);
-    }
-  }, [coords, fetchWeatherByCoords]);
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    fetchWeather(city);
+    setCity("");
+  };
 
   return (
-    <div className="app-container">
-      <header>
-        <h1>Weather Dashboard</h1>
-        <UnitToggle />
-      </header>
-      
-      <main>
-        <SearchBar />
-        <WeatherCard />
-        <ForecastList />
-      </main>
-    </div>
+    <form onSubmit={handleSubmit} className="search-form">
+      <input
+        type="text"
+        placeholder="Enter city..."
+        value={city}
+        onChange={(e) => setCity(e.target.value)}
+      />
+      <button type="submit">Search</button>
+    </form>
   );
-} 
+};
+
+const AppContent = () => (
+  <div className="app">
+    <h1>Weather Dashboard</h1>
+    <SearchForm />
+    <WeatherCard />
+  </div>
+);
+
+function App() {
+  return (
+    <WeatherProvider>
+      <AppContent />
+    </WeatherProvider>
+  );
+}
 
 export default App;
