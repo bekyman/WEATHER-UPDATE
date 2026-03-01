@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import { WeatherProvider, useWeather } from "./features/weather/context/WeatherContext";
-import WeatherCard from "./features/weather/components/WeatherCard";
+import { WeatherProvider, useWeather } from "../features/weather/context/WeatherContext";
+import WeatherCard from "../features/weather/components/WeatherCard";
 
 const SearchForm = () => {
   const [city, setCity] = useState("");
