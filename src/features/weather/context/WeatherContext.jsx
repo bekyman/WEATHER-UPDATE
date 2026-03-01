@@ -1,6 +1,4 @@
-import React from "react";
-import { useWeather } from "../context/WeatherContext";
-
+import React, { createContext, useContext, useState } from "react";
 export default function WeatherCard() {
   const { weather, loading, unit } = useWeather();
 
