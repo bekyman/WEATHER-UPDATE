@@ -11,23 +11,34 @@ export const WeatherProvider = ({ children }) => {
 
 
   const fetchWeather = async (city) => {
-    if (!city) return;
-    setLoading(true);
-    try {
-      const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-      const res = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unit}&appid=${apiKey}`
-      );
-      if (!res.ok) throw new Error("City not found");
-      const data = await res.json();
-      setWeather(data);
-    } catch (err) {
-      console.error(err);
-      setWeather(null);
-    } finally {
-      setLoading(false);
-    }
-  };
+  if (!city) return;
+  setLoading(true);
+  try {
+    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
+
+    const res = await fetch(
+      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${unit}&appid=${apiKey}`
+    );
+
+    if (!res.ok) throw new Error("City not found");
+
+    const data = await res.json();
+
+    // Get one forecast per day (every 8th item = 24h)
+    const dailyForecast = data.list.filter((item, index) => index % 8 === 0);
+
+    setWeather({
+      city: data.city,
+      list: dailyForecast
+    });
+
+  } catch (err) {
+    console.error(err);
+    setWeather(null);
+  } finally {
+    setLoading(false);
+  }
+};
 
   const toggleUnit = () => {
     setUnit((prev) => (prev === "metric" ? "imperial" : "metric"));
