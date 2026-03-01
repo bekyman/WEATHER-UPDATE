@@ -1,66 +1,37 @@
- import React, { createContext, useContext, useState } from "react";
+import React from "react";
+import { useWeather } from "../context/WeatherContext";
 
+export default function WeatherCard() {
+  const { weather, loading, unit } = useWeather();
 
-const WeatherContext = createContext(null);
+  if (loading) return <div>Loading forecast...</div>;
+  if (!weather) return <div>Search for a city to see 5-day forecast.</div>;
 
-
-export const WeatherProvider = ({ children }) => {
-  const [weather, setWeather] = useState(null);
-  const [loading, setLoading] = useState(false);
-  const [unit, setUnit] = useState("metric"); 
-
-
-  const fetchWeather = async (city) => {
-  if (!city) return;
-  setLoading(true);
-  try {
-    const apiKey = import.meta.env.VITE_WEATHER_API_KEY;
-
-    const res = await fetch(
-      `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${unit}&appid=${apiKey}`
-    );
-
-    if (!res.ok) throw new Error("City not found");
-
-    const data = await res.json();
-
-    // Get one forecast per day (every 8th item = 24h)
-    const dailyForecast = data.list.filter((item, index) => index % 8 === 0);
-
-    setWeather({
-      city: data.city,
-      list: dailyForecast
-    });
-
-  } catch (err) {
-    console.error(err);
-    setWeather(null);
-  } finally {
-    setLoading(false);
-  }
-};
-
-  const toggleUnit = () => {
-    setUnit((prev) => (prev === "metric" ? "imperial" : "metric"));
-  };
+  const unitLabel = unit === "metric" ? "°C" : "°F";
 
   return (
-    <WeatherContext.Provider
-      value={{
-        weather,
-        loading,
-        unit,
-        fetchWeather,
-        toggleUnit,
-      }}
-    >
-      {children}
-    </WeatherContext.Provider>
-  );
-};
+    <div className="bg-white shadow p-4 rounded">
+      <h2 className="text-xl font-semibold mb-4">
+        {weather.city?.name}, {weather.city?.country}
+      </h2>
 
-export const useWeather = () => {
-  const context = useContext(WeatherContext);
-  if (!context) throw new Error("useWeather must be inside WeatherProvider");
-  return context;
-};
+      <div className="grid grid-cols-1 md:grid-cols-5 gap-4">
+        {weather.list?.map((day, index) => (
+          <div key={index} className="border p-3 rounded text-center">
+            <p className="font-medium">
+              {new Date(day.dt * 1000).toLocaleDateString()}
+            </p>
+
+            <p className="text-lg font-bold">
+              {Math.round(day.main?.temp)}{unitLabel}
+            </p>
+
+            <p className="text-sm">
+              {day.weather?.[0]?.description}
+            </p>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
