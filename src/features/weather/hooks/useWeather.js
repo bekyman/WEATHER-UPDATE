@@ -1,3 +1,4 @@
+import { getUserLocation } from "../utils/getUserLocation";
 import { useState, useEffect } from "react";
 import { getWeatherByCoords } from "../api/weatherApi";
 
